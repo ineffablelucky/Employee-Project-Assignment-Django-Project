@@ -1,0 +1,52 @@
+{% load static %}
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<script src = "/static/js/main.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</head>
+
+                    {% if messages %}
+                    	{% for message in messages %}
+                    		<div class="alert alert-{{ message.tags }}">
+                    			<a href="#" class="close" data-dismiss="alert">&times;</a>
+                                {{ message }}
+                    		</div>
+                    	{% endfor %}
+                    {% endif %}
+{% if user.is_authenticated %}
+<button><a href="{% url 'project_list_view' %}">Go to Projects</a></button>
+<button><a href="{% url 'company_list_view' %}">See All Companies</a></button>
+<button><a href="{% url 'add_company' %}?redirect_next=emp_page">ADD company</a></button>
+<button><a href="{% url 'module_list_view' %}">ALL Modules</a></button>
+<button><a href="{% url 'logout' %}">logout</a></button>
+{% else %}
+<button><a href="{% url 'login' %}">login</a></button>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th class="emailid">Email id</th>
+            <th class="Employee">Employee</th>
+            <th class="crud">view</th>
+            <th class="crud">update</th>
+            <th class="crud">delete</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        {% for emp in employees %}
+        <tr>
+            <td>{{emp.employee.email}}</td>
+            <td>{{emp.employee}}</td>
+            <td><button data-toggle="modal" data-target="#myModal-{{emp.id}}">View</button></td>
+            <td><button><a href="{% url 'update_employee' pk=emp.id %}">Update</a></button></td>
+            <td><button type="submit"><a href="{% url 'delete_employee' pk=emp.id %}">Delete</a></button></td>
+        </tr>
+        {% include "employee_info_modal.html" %}
+        {% endfor %}
+    </tbody>
+</table>

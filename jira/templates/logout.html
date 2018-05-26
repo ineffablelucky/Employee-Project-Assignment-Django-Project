@@ -1,0 +1,16 @@
+{% load static %}
+                    {% if messages %}
+                    	{% for message in messages %}
+                    		<div class="alert alert-{{ message.tags }}">
+                    			<a href="#" class="close" data-dismiss="alert">&times;</a>
+                                {{ message }}
+                    		</div>
+                    	{% endfor %}
+                    {% endif %}
+
+
+
+<p class="lead">You have logged out!!</p>
+      <br>
+
+<a class="button" href="{% url 'company_list_view' %}">Home</a>

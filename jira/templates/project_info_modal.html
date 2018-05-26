@@ -1,0 +1,24 @@
+<!-- Modal -->
+<div id="myModal-{{proj.id}}" class="modal fade" role="dialog">
+<div class="modal-dialog">
+
+  <!-- Modal content-->
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+    </div>
+    <div class="modal-body">
+      <p>Company : {{proj.company}} </p>
+      <p>Team Leader : {{proj.team_leader.employee_name}}</p>
+
+        <p>Team Members :</p> {% for member in proj.team_members.all %}<p>{{member.employee_name }}</p>{% endfor %}
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+
+</div>
+</div>

@@ -1,0 +1,20 @@
+{% load static %}
+{% if messages %}
+                    	{% for message in messages %}
+                    		<div class="alert alert-{{ message.tags }}">
+                    			<a href="#" class="close" data-dismiss="alert">&times;</a>
+                                {{ message }}
+                    		</div>
+                    	{% endfor %}
+                    {% endif %}
+<form method="post">{% csrf_token %}
+{{form.as_p}}
+
+
+<!--	<br>
+	<h3>error in company</h3>
+	{{form.company_name.errors.as_text}}
+-->
+
+<button>Submit</button>
+</form>
