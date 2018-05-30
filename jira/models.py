@@ -94,8 +94,8 @@ class Project(models.Model):
     company = models.ForeignKey('Company', on_delete=models.CASCADE)
     project_code = models.CharField(max_length=50, unique=True, default=None)
     project_name = models.CharField(max_length=200, unique=False, default=None)
-    team_members = models.ManyToManyField(Employee, related_name='team_employees')
-    team_leader = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name='team_leader', default=None)
+    team_members = models.ManyToManyField(MyUser, related_name='team_employees')
+    team_leader = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='team_leader')
 
     def __str__(self):
         return '{} project of company {}'.format(self.project_name, self.company)
@@ -111,10 +111,10 @@ class Module(models.Model):
     module_name = models.CharField(max_length=200)
     module_code = models.CharField(max_length=100, unique=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    employee = models.OneToOneField(Employee, related_name='employer_model', on_delete=models.CASCADE)
+    employee = models.OneToOneField(MyUser, related_name='employer_model', on_delete=models.CASCADE)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    assignee = models.ForeignKey(Employee, related_name='assignee', on_delete=models.CASCADE)
+    assignee = models.ForeignKey(MyUser, related_name='assignee', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} module of {} for employee {} '.format(self.module_name, self.project, self.employee)
@@ -122,4 +122,5 @@ class Module(models.Model):
     class Meta:
         permissions = (
             ('view_modules', 'Can View Modules'),
+            ('emp_view_module', 'Modules only Emp can view'),
         )

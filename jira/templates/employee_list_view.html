@@ -16,12 +16,14 @@
                     		</div>
                     	{% endfor %}
                     {% endif %}
+
 {% if user.is_authenticated %}
 <button><a href="{% url 'project_list_view' %}">Go to Projects</a></button>
 <button><a href="{% url 'company_list_view' %}">See All Companies</a></button>
 <button><a href="{% url 'add_company' %}?redirect_next=emp_page">ADD company</a></button>
 <button><a href="{% url 'module_list_view' %}">ALL Modules</a></button>
 <button><a href="{% url 'logout' %}">logout</a></button>
+<p>Logged User: {{user}}</p>
 {% else %}
 <button><a href="{% url 'login' %}">login</a></button>
 {% endif %}

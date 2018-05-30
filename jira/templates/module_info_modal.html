@@ -1,4 +1,33 @@
 <!-- Modal -->
+{% if perms.jira.emp_view_module %}
+<div id="myModal-{{modules.id}}" class="modal fade" role="dialog">
+<div class="modal-dialog">
+
+  <!-- Modal content-->
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+    </div>
+    <div class="modal-body">
+      <p>Company : {{modules.module_code}} </p>
+      <p>Company : {{modules.project.company}} </p>
+      <p>Employee : {{modules.employee.full_name}}</p>
+        <p>Start Date : {{modules.start_date}}</p>
+        <p>End Date : {{modules.end_date}}</p>
+        <p>Assignee : {{modules.assignee.full_name}}</p>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+{% else %}
 <div id="myModal-{{mod.id}}" class="modal fade" role="dialog">
 <div class="modal-dialog">
 
@@ -11,10 +40,10 @@
     <div class="modal-body">
       <p>Company : {{mod.module_code}} </p>
       <p>Company : {{mod.project.company}} </p>
-      <p>Employee : {{mod.employee.employee_name}}</p>
+      <p>Employee : {{mod.employee.full_name}}</p>
         <p>Start Date : {{mod.start_date}}</p>
         <p>End Date : {{mod.end_date}}</p>
-        <p>Assignee : {{mod.assignee.employee_name}}</p>
+        <p>Assignee : {{mod.assignee.full_name}}</p>
 
     </div>
     <div class="modal-footer">
@@ -24,3 +53,4 @@
 
 </div>
 </div>
+{% endif %}

@@ -23,9 +23,8 @@
 <button><a href="{% url 'company_list_view' %}">See All Companies</a></button>
 <button><a href="{% url 'module_list_view' %}">ALL Modules</a></button>
 <button><a href="{% url 'add_company' %}?redirect_next=project_page">ADD company</a></button>
-
 <button><a href="{% url 'add_project' %}">ADD project</a></button>
-
+<p>Logged User: {{user}}</p>
 {% else %}
 <button><a href="{% url 'login' %}">login</a></button>
 {% endif %}

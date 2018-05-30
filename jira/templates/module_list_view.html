@@ -25,7 +25,7 @@
 <button><a href="{% url 'add_company' %}?redirect_next=project_page">ADD company</a></button>
 <button><a href="{% url 'add_project' %}">ADD project</a></button>
 <button><a href="{% url 'add_module' %}">ADD Module</a></button>
-
+<p>Logged User: {{user}}</p>
 {% else %}
 <button><a href="{% url 'login' %}">login</a></button>
 {% endif %}
@@ -41,6 +41,17 @@
         </tr>
     </thead>
     <tbody>
+        {% if perms.jira.emp_view_module %}
+            <tr>
+            <td>{{modules.module_name}}</td>
+            <td>{{modules.project.project_name}}</td>
+            <td><button data-toggle="modal" data-target="#myModal-{{modules.id}}">View</button></td>
+            <td><button><a href="{% url 'update_module' pk=modules.id %}">Update</a></button></td>
+            <td><button type="submit"><a href="{% url 'delete_module' pk=modules.id %}">Delete</a></button></td>
+        </tr>
+        {% include "module_info_modal.html" %}
+        {% else %}
+
         {% for mod in modules %}
         <tr>
             <td>{{mod.module_name}}</td>
@@ -51,5 +62,6 @@
         </tr>
         {% include "module_info_modal.html" %}
         {% endfor %}
+        {% endif %}
     </tbody>
 </table>

@@ -10,9 +10,9 @@
     </div>
     <div class="modal-body">
       <p>Company : {{proj.company}} </p>
-      <p>Team Leader : {{proj.team_leader.employee_name}}</p>
+      <p>Team Leader : {{proj.team_leader.full_name}}</p>
 
-        <p>Team Members :</p> {% for member in proj.team_members.all %}<p>{{member.employee_name }}</p>{% endfor %}
+        <p>Team Members :</p>{% for member in proj.team_members.all %}<p>{{member.full_name}}</p>{% endfor %}
 
     </div>
     <div class="modal-footer">

@@ -8,126 +8,6 @@ from django.contrib.auth.models import Group
 from .models import Company, Employee, Project, Module, MyUser
 
 
-class AddEditCompanyForm(forms.ModelForm):
-    class Meta:
-        model = Company
-        fields = '__all__'
-
-    def clean_company_name(self):
-        """
-        :return: company_name if it does not already exists in the database
-        else raises validation error
-        """
-        data = self.cleaned_data.get('company_name').title()
-
-        try:
-
-            obj = Company.objects.get(company_name=data)
-            if data == obj.company_name:
-                return data
-            raise forms.ValidationError('Company already exists. Choose a unique name')
-
-        except Company.DoesNotExist:
-            return data
-
-    def clean_year(self):
-        """
-        :return:  year if it exists in the mentioned range else returns validation error
-        """
-        data = self.cleaned_data.get('year')
-
-        if 2100 > data > 1800:
-            return data
-        raise forms.ValidationError("Year Range 1801-2099")
-
-
-class EditEmployeeForm(forms.ModelForm):
-    date_of_joining = forms.DateField(input_formats=settings.DATE_INPUT_FORMATS,  # DATE_INPUT_FORMATS = ['%d-%m-%Y']
-                                      help_text='It must be in DD-MM-YYYY format.',
-                                      widget=forms.widgets.DateInput(format="%d-%m-%Y"))  # to get data from database
-    # and render in html form in a particular format
-
-    class Meta:
-        model = Employee
-        fields = '__all__'  # date_of_joining Model-field from models.py is overridden by date_of_joining FormField
-
-    def clean_age(self):
-        """
-        :return: checks if the age entered is in range
-        """
-        data = self.cleaned_data.get('age')
-
-        if 17 < data < 66:
-            return data
-        raise forms.ValidationError("Incorrect age. Check the range")
-
-
-class AddEditProjectForm(forms.ModelForm):
-    class Meta:
-        model = Project
-        fields = '__all__'
-
-    def clean_project_name(self):
-        """
-        https://stackoverflow.com/questions/20564856/django-exclude-self-from-queryset-for-validation
-        :return: checks existing project name in the same company
-        """
-        data = self.cleaned_data['project_name'].title()
-        comp = self.cleaned_data.get('company')
-        qs = Project.objects.filter(Q(company=comp) & Q(project_name=data))
-        if self.instance.pk is not None:
-            qs = qs.exclude(pk=self.instance.pk)
-        if qs.exists():
-            raise forms.ValidationError("There is already a project with name: %s" % data)
-        return data
-
-    def clean_team_leader(self):
-        """
-        :return: checks if team leader is one of the team members on the project
-        """
-        data = self.cleaned_data.get('team_leader')
-        selected_member = self.cleaned_data.get('team_members').__dict__['_result_cache']
-
-        if data not in selected_member:
-            raise forms.ValidationError("The team leader must be one of the selected team members")
-        return data
-
-
-class AddEditModuleForm(forms.ModelForm):
-    start_date = forms.DateTimeField(input_formats=settings.DATETIME_INPUT_FORMATS,  # ['%d-%m-%Y %H:%M:%S']
-                                     initial=datetime.now(),
-                                     help_text='It must be in DD-MM-YYYY HH:MM 24-hour format.',
-                                     widget=forms.widgets.DateTimeInput(
-                                         format="%d-%m-%Y %H:%M"))
-
-    end_date = forms.DateTimeField(input_formats=settings.DATETIME_INPUT_FORMATS,  # ['%d-%m-%Y %H:%M:%S']
-                                   initial=datetime.now(),
-                                   help_text='It must be in DD-MM-YYYY HH:MM 24-hour format.',
-                                   widget=forms.widgets.DateTimeInput(
-                                       format="%d-%m-%Y %H:%M"))
-
-    class Meta:
-        model = Module
-        fields = '__all__'
-
-    def clean_module_name(self):
-        data = self.cleaned_data.get('module_name').title()
-        return data
-
-    def clean_end_date(self):
-        """
-        to do date comparison
-        :return: error is end date is earlier than start date
-        """
-
-        end_date = self.cleaned_data.get('end_date')
-        start_date = self.cleaned_data.get('start_date')
-
-        if end_date <= start_date:
-            raise forms.ValidationError("End date and time should be later than start date")
-        return end_date
-
-
 class UserRegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True, max_length=200)
     full_name = forms.CharField(required=True, max_length=100)
@@ -188,3 +68,168 @@ class UserRegistrationForm(UserCreationForm):
         if data.replace(" ", "").isalpha():
             return data.strip()
         raise forms.ValidationError("Enter correct name using alphabets and single space")
+
+
+class AddEditCompanyForm(forms.ModelForm):
+    class Meta:
+        model = Company
+        fields = '__all__'
+
+    def clean_company_name(self):
+        """
+        :return: company_name if it does not already exists in the database
+        else raises validation error
+        """
+        data = self.cleaned_data.get('company_name').title()
+
+        try:
+
+            obj = Company.objects.get(company_name=data)
+            if data == obj.company_name:
+                return data
+            raise forms.ValidationError('Company already exists. Choose a unique name')
+
+        except Company.DoesNotExist:
+            return data
+
+    def clean_year(self):
+        """
+        :return:  year if it exists in the mentioned range else returns validation error
+        """
+        data = self.cleaned_data.get('year')
+
+        if 2100 > data > 1800:
+            return data
+        raise forms.ValidationError("Year Range 1801-2099")
+
+
+class EditEmployeeForm(forms.ModelForm):
+    date_of_joining = forms.DateField(input_formats=settings.DATE_INPUT_FORMATS,  # DATE_INPUT_FORMATS = ['%d-%m-%Y']
+                                      help_text='It must be in DD-MM-YYYY format.',
+                                      widget=forms.widgets.DateInput(format="%d-%m-%Y"))  # to get data from database
+    # and render in html form in a particular format
+
+    class Meta:
+        model = Employee
+        fields = '__all__'  # date_of_joining Model-field from models.py is overridden by date_of_joining FormField
+
+    def clean_age(self):
+        """
+        :return: checks if the age entered is in range
+        """
+        data = self.cleaned_data.get('age')
+
+        if 17 < data < 66:
+            return data
+        raise forms.ValidationError("Incorrect age. Check the range")
+
+
+class AddEditProjectForm(forms.ModelForm):
+
+    team_leader = forms.ModelChoiceField(queryset=MyUser.objects.filter(designation='Team Leader'),
+                                         required=True, empty_label=None)
+    team_members = forms.ModelMultipleChoiceField(queryset=MyUser.objects.filter(designation='Employee'),
+                                                  required=True)
+
+    class Meta:
+        model = Project
+        fields = '__all__'
+
+    def save(self, commit=True):
+        project = super(AddEditProjectForm, self).save(commit=False)
+        if project.team_leader_id is None:
+            team_leader_variable = self.cleaned_data['team_leader']
+            project.team_leader = team_leader_variable
+
+        else:
+            team_leader_variable = self.cleaned_data['team_leader']
+            project.team_leader = team_leader_variable
+
+        if commit:
+            project.save()
+
+        project.team_members.set(self.cleaned_data['team_members'])
+
+        return project
+
+    def clean_team_members(self):
+        data = self.cleaned_data['team_members']
+        return data
+
+    def clean_team_leader(self):
+        data = self.cleaned_data['team_leader']
+        return data
+
+    def clean_project_name(self):
+        """
+        https://stackoverflow.com/questions/20564856/django-exclude-self-from-queryset-for-validation
+        :return: checks existing project name in the same company
+        """
+        data = self.cleaned_data['project_name'].title()
+        comp = self.cleaned_data.get('company')
+        qs = Project.objects.filter(Q(company=comp) & Q(project_name=data))
+        if self.instance.pk is not None:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise forms.ValidationError("There is already a project with name: %s" % data)
+        return data
+
+
+class AddEditModuleForm(forms.ModelForm):
+    start_date = forms.DateTimeField(input_formats=settings.DATETIME_INPUT_FORMATS,  # ['%d-%m-%Y %H:%M']
+                                     initial=datetime.now(),
+                                     help_text='It must be in DD-MM-YYYY HH:MM 24-hour format.',
+                                     widget=forms.widgets.DateTimeInput(
+                                         format="%d-%m-%Y %H:%M"))
+
+    end_date = forms.DateTimeField(input_formats=settings.DATETIME_INPUT_FORMATS,  # ['%d-%m-%Y %H:%M']
+                                   initial=datetime.now(),
+                                   help_text='It must be in DD-MM-YYYY HH:MM 24-hour format.',
+                                   widget=forms.widgets.DateTimeInput(
+                                       format="%d-%m-%Y %H:%M"))
+
+    assignee_by = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'readonly': True}))
+
+    employee = forms.ModelChoiceField(queryset=MyUser.objects.filter(designation='Employee'), required=True,
+                                      empty_label=None)
+
+    class Meta:
+        model = Module
+        fields = '__all__'
+        exclude = ('assignee',)
+
+    def __init__(self, *args, **kwargs):
+
+        self.logged_user = kwargs.pop('logged_user')  # accessing the request.user in current request coming from view file
+        super(AddEditModuleForm, self).__init__(*args, **kwargs)
+        if self.instance.pk is None:
+            self.fields['assignee_by'].initial = self.logged_user
+        else:
+            self.fields['assignee_by'].initial = self.instance.assignee
+
+    def save(self, commit=True):
+        module = super(AddEditModuleForm, self).save(commit=False)
+
+        if self.instance.pk is None:
+            module.assignee = self.logged_user
+
+        if commit:
+            module.save()
+        return module
+
+    def clean_module_name(self):
+        data = self.cleaned_data.get('module_name').title()
+        return data
+
+    def clean_end_date(self):
+        """
+        to do date comparison
+        :return: error is end date is earlier than start date
+        """
+
+        end_date = self.cleaned_data.get('end_date')
+        start_date = self.cleaned_data.get('start_date')
+
+        if end_date <= start_date:
+            raise forms.ValidationError("End date and time should be later than start date")
+        return end_date
