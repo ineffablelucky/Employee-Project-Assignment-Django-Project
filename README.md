@@ -17,11 +17,16 @@ Employee can only see modules and projects details of only those of which he is 
 2. add 
     AUTHENTICATION_BACKENDS = ['jira.backends.EmailBackend']
     DATE_INPUT_FORMATS = ['%d-%m-%Y']
-    DATETIME_INPUT_FORMATS = ['%d-%m-%Y %H:%M:%S']
+    DATETIME_INPUT_FORMATS = ['%d-%m-%Y %H:%M']
     AUTH_USER_MODEL = 'jira.MyUser' 
     LOGIN_URL = 'login'
     LOGIN_REDIRECT_URL = 'company_list_view'
     
 I have not setup proper html yet with links to  right now navigation thorugh url is advised
 you cna change     LOGIN_REDIRECT_URL = 'company_list_view' to whatever suits you as i am working on permissions on this project 
-and i willl complete it soon and update it.
+and i will complete it soon and update it.
+
+
+Delete all migrations and pyc files before running the first migration
+
+Create a superuser and use 'register' view to create users for the app.
