@@ -202,6 +202,7 @@ class AddEditModuleForm(forms.ModelForm):
 
         self.logged_user = kwargs.pop('logged_user')  # accessing the request.user in current request coming from view file
         super(AddEditModuleForm, self).__init__(*args, **kwargs)
+
         if self.instance.pk is None:
             self.fields['assignee_by'].initial = self.logged_user
         else:

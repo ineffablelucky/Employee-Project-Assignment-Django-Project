@@ -12,3 +12,21 @@
     {{form.as_p}}
     <button type="submit">Update</button>
 </form>
+
+{% if projects %}
+
+    {% for proj in projects %}
+        <ul>
+            <li>{{proj.project_name}}</li>
+        </ul>
+    {% endfor %}
+
+{% elif admin %}
+
+<p>{{ admin }}</p>
+
+{% else %}
+
+<p>no projects available to this employee yet</p>
+
+{% endif %}

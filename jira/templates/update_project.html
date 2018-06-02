@@ -12,3 +12,13 @@
     {{form.as_p}}
     <button type="submit">Update</button>
 </form>
+
+{% if modules %}
+{% for mod in modules %}
+        <ul>
+            <li>{{mod.module_name}}</li>
+        </ul>
+{% endfor %}
+{% else %}
+<p>no modules available to this project yet</p>
+{% endif %}

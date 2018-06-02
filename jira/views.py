@@ -136,7 +136,6 @@ class EmployeeView(LoginRequiredMixin, PermissionRequiredMixin, generic.ListView
 """
 EmployeeCreateView removed as Employee will be created with register page
 """
-
 # class EmployeeCreateView(LoginRequiredMixin, generic.CreateView):
 #     """
 #         Generic View to Create an Employee
@@ -163,6 +162,23 @@ class EmployeeUpdateView(LoginRequiredMixin, PermissionRequiredMixin, generic.Up
     template_name = 'update_employee.html'
     model = Employee
     success_url = reverse_lazy('employee_list_view')
+
+    def get_context_data(self, **kwargs):
+
+        context = super(EmployeeUpdateView, self).get_context_data(**kwargs)
+        user_model_obj = Employee.objects.get(id=self.kwargs['pk']).employee
+
+        if user_model_obj.designation == 'Employee':
+            context['projects'] = user_model_obj.team_employees.all()
+
+        if user_model_obj.designation == 'Team Leader':
+            context['projects'] = user_model_obj.team_leader.all()
+
+        if user_model_obj.designation == 'Admin':
+            context['admin'] = """The Employee you have selected belongs to Admin Group. 
+                                  He doesn't work on any project, Idiot."""
+
+        return context
 
     def form_valid(self, form):
         result = super().form_valid(form)
@@ -197,7 +213,7 @@ class EmployeeDeleteView(LoginRequiredMixin, PermissionRequiredMixin, generic.De
     def get_success_url(self):
         if self.success_url:
             messages.warning(
-                self.request, '{} deleted'.format(self.object.employee.email))
+                self.request, 'user with email {} deleted'.format(self.object.employee.email))
             return self.success_url.format(**self.object.__dict__)
         else:
             raise ImproperlyConfigured(
@@ -220,12 +236,10 @@ class ProjectView(LoginRequiredMixin, PermissionRequiredMixin, generic.ListView)
             return Project.objects.all()
 
         elif self.request.user.groups.filter(name='Team Leader Group').exists():
-            employee_id = MyUser.objects.get(id=self.request.user.id)
-            return employee_id.team_leader.all()
+            return self.request.user.team_leader.all()
 
         elif self.request.user.groups.filter(name='Low Level Employee Group').exists():
-            employee_id = MyUser.objects.get(id=self.request.user.id)
-            return employee_id.team_employees.all()
+            return self.request.user.team_employees.all()
 
         raise PermissionDenied
 
@@ -259,13 +273,20 @@ class ProjectUpdateView(LoginRequiredMixin, PermissionRequiredMixin, generic.Upd
     model = Project
     success_url = reverse_lazy('project_list_view')
 
+    def get_context_data(self, **kwargs):
+
+        context = super(ProjectUpdateView, self).get_context_data(**kwargs)
+        context["modules"] = Module.objects.filter(project=self.kwargs['pk'])
+        return context
+
     def get(self, request, *args, **kwargs):
 
         if self.request.user.groups.filter(name='Team Leader Group').exists():
             self.object = self.get_object()
-            employee_id = MyUser.objects.get(id=self.request.user.id)
-            if self.object in employee_id.team_leader.all():
+
+            if self.object in self.request.user.team_leader.all():
                 return super().get(request, *args, **kwargs)
+
             raise PermissionDenied
 
         elif self.request.user.groups.filter(name='Admin Group').exists():
@@ -317,12 +338,10 @@ class ModuleView(LoginRequiredMixin, PermissionRequiredMixin, generic.ListView):
             return Module.objects.all()
 
         elif self.request.user.groups.filter(name='Team Leader Group').exists():
-            employee_id = MyUser.objects.get(id=self.request.user.id)
-            return employee_id.assignee.all()
+            return self.request.user.assignee.all()
 
         elif self.request.user.groups.filter(name='Low Level Employee Group').exists():
-            employee_id = MyUser.objects.get(id=self.request.user.id)
-            return employee_id.employer_model
+            return self.request.user.employer_model
 
         raise PermissionDenied
 
@@ -371,10 +390,12 @@ class ModuleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, generic.Upda
     def get(self, request, *args, **kwargs):
 
         if self.request.user.groups.filter(name='Team Leader Group').exists():
+
             self.object = self.get_object()
-            employee_id = MyUser.objects.get(id=self.request.user.id)
-            if self.object in employee_id.assignee.all():
+
+            if self.object in self.request.user.assignee.all():
                 return super().get(request, *args, **kwargs)
+
             raise PermissionDenied
 
         elif self.request.user.groups.filter(name='Admin Group').exists():
@@ -388,15 +409,6 @@ class ModuleUpdateView(LoginRequiredMixin, PermissionRequiredMixin, generic.Upda
         kwargs = super().get_form_kwargs()
         kwargs.update({'logged_user': self.request.user})
         return kwargs
-
-    # def get_context_data(self, **kwargs):
-    #     """Insert the form into the context dict."""
-    #     print(kwargs)
-    #
-    #     if 'form' not in kwargs:
-    #         print(self.get_form())
-    #         kwargs['form'] = self.get_form()
-    #     return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
         result = super().form_valid(form)
