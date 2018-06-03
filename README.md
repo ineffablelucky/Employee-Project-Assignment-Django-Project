@@ -2,14 +2,14 @@
 
 In this project, the task is:
 My consultancy firm have various projects from different companies and they have to be assigned to the Employees of my firm.
-Each project has verious modules which can be assigned to employees by Team leader.
+Each project has various modules which can be assigned to employees by Team leader.
 
 There are 3 type of designations: Admin (not a superuser created in django), Team Leader and Employee (low-level).
 
-Admin can register new employee in my firm and give out uniqueemail id and password to the Team Leaders and EMployees so that 
+Admin can register new employee in my firm and give out unique email id and password to the Team Leaders and EMployees so that 
 they can sign in and see their respective projects. Admin can CRUD companies, projects, employee and modules.
 
-Team leader can assignee modules to employees and see the projects details and update/delete modules.
+Team leader can assign modules to employees and see the projects details and update/delete modules.
 
 Employee can only see modules and projects details of only those of which he is part of.
 
