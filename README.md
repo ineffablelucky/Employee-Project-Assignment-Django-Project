@@ -34,4 +34,4 @@ Create a superuser and use 'register' view to create users for the app.
 
 Update : 09-06-2018
 ---------------------
-Working on the integration of my project to Gentelella (https://colorlib.com/polygon/gentelella/) front-end.
+Working on the integration of my project with Gentelella (https://colorlib.com/polygon/gentelella/) front-end.
